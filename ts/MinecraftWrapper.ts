@@ -106,10 +106,36 @@ export class MinecraftWrapper extends TypedEmitter<MWEvents> {
 		} else if (message.charAt(0) === "<") {
 			const player: string = message.substring(1, message.indexOf(">"));
 			const msg: string = message.substring(message.indexOf("> ") + 2);
-			this.emit("playerMessage", msg, player, time);
+			if (msg.charAt(0) === "#") {
+				const commandParts: string[] = msg.substr(1).split(" ");
+				this.handlePlayerCommand(player, commandParts[0], commandParts.splice(1));
+			} else this.emit("playerMessage", msg, player, time);
 		} else {
 			this.emit("message", message, time);
 		}
+	}
+
+	private handlePlayerCommand(player: string, command: string, parameters: string[]): void {
+
+		switch (command) {
+			case "tp":
+				return this.handleTPCommand(player, parameters);
+			case "die":
+				return this.handleDie(player);
+		}
+
+	}
+
+	private handleDie(player: string): void {
+		this.command("kill " + player);
+	}
+
+	private handleTPCommand(player: string, parameters: string[]) {
+		const x: number = Math.floor(Math.random() * 20000 - 10000);
+		const y: number = Math.floor(Math.random() * 20000 - 10000);
+		this.title("Teleporting", `(${x}, ${y})`, player);
+		this.command(`effect give ${player} minecraft:slow_falling 45`);
+		this.command(`tp ${player} ${x} 256 ${y}`);
 	}
 
 	public playerCount(): number {

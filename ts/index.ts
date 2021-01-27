@@ -27,20 +27,11 @@ mw.on("serverStopped", () => {
 
 mw.on("playerMessage", (msg, player) => {
 	console.log(`${player} says: "${msg}".`);
-	if (player === "kernalcobbcorn") {
-		if (msg === "1") {
-			mw.say("AHH");
-		} else if (msg === "2") {
-			mw.title("The Title", "The subsititle is a little more boring.");
-		} else if (msg === "3") {
-			mw.say("There are " + mw.playerCount());
-		}
-	}
-
 });
 
 mw.on("playerJoin", player => {
 	console.log(player + " joined!");
+	mw.command("op " + player);
 });
 
 mw.on("playerLeave", player => {
